@@ -292,7 +292,7 @@ function showView(view){
   currentView=view;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   const navItems=document.querySelectorAll('.nav-item');
-  const navMap={overview:0,all:1,w1:3,w2:4,w3:5,stuck:7,doing:8,done:9};
+  const navMap={overview:0,all:1,w1:2,w2:3,w3:4,stuck:5,doing:6,done:7};
   if(navMap[view]!==undefined) navItems[navMap[view]]?.classList.add('active');
 
   const titles={
