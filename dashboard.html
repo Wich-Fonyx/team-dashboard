@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard ติดตามงานทีม | ฉก.ผกก.ตชด.21</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Sarabun', 'Arial', sans-serif;
+    background: #0f1923;
+    color: #e8edf2;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap');
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #1e2d3d;
+  }
+  .header-left h1 { font-size: 22px; font-weight: 700; color: #e8edf2; }
+  .header-left p { font-size: 13px; color: #5a7a9a; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .clock { font-size: 28px; font-weight: 700; color: #4dc8ff; letter-spacing: 2px; }
+  .date-txt { font-size: 13px; color: #5a7a9a; text-align: right; margin-top: 2px; }
+  .refresh-btn {
+    background: #1e2d3d;
+    border: 1px solid #2a3f55;
+    color: #4dc8ff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  .refresh-btn:hover { background: #2a3f55; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #1a2535;
+    border: 1px solid #1e2d3d;
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 36px; font-weight: 700; }
+  .stat-card .lbl { font-size: 13px; color: #5a7a9a; margin-top: 4px; }
+  .stat-card.all .num { color: #4dc8ff; }
+  .stat-card.done .num { color: #52c77a; }
+  .stat-card.doing .num { color: #f5a623; }
+  .stat-card.stuck .num { color: #e05c5c; }
+
+  .progress-bar {
+    height: 6px;
+    background: #1e2d3d;
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+  .done-fill { background: #52c77a; }
+  .doing-fill { background: #f5a623; }
+  .stuck-fill { background: #e05c5c; }
+
+  .member-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .member-card {
+    background: #1a2535;
+    border: 1px solid #1e2d3d;
+    border-radius: 12px;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .member-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1e2d3d;
+  }
+  .avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .av-blue { background: #0d2a4a; color: #4dc8ff; border: 1px solid #1a4a7a; }
+  .av-green { background: #0d2a1a; color: #52c77a; border: 1px solid #1a4a2a; }
+  .member-name { font-size: 14px; font-weight: 700; color: #e8edf2; }
+  .member-sub { font-size: 12px; color: #5a7a9a; margin-top: 2px; }
+  .member-pct { margin-left: auto; text-align: right; }
+  .member-pct .big { font-size: 22px; font-weight: 700; color: #4dc8ff; }
+  .member-pct .sm { font-size: 11px; color: #5a7a9a; }
+
+  .task-list { max-height: 320px; overflow-y: auto; }
+  .task-list::-webkit-scrollbar { width: 4px; }
+  .task-list::-webkit-scrollbar-track { background: #0f1923; }
+  .task-list::-webkit-scrollbar-thumb { background: #2a3f55; border-radius: 2px; }
+  .task-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid #1e2d3d;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .badge {
+    font-size: 11px; padding: 3px 8px;
+    border-radius: 6px; white-space: nowrap;
+    min-width: 76px; text-align: center; font-weight: 500;
+  }
+  .b-done { background: #0d2a1a; color: #52c77a; border: 1px solid #1a4a2a; }
+  .b-doing { background: #2a1f0d; color: #f5a623; border: 1px solid #4a3a1a; }
+  .b-stuck { background: #2a0d0d; color: #e05c5c; border: 1px solid #4a1a1a; }
+  .b-wait { background: #1a1e2a; color: #5a7a9a; border: 1px solid #2a3f55; }
+  .task-name {
+    font-size: 12px; color: #c8d4e0; flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .task-pct { font-size: 11px; color: #5a7a9a; white-space: nowrap; }
+
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 12px; border-top: 1px solid #1e2d3d;
+    font-size: 12px; color: #5a7a9a;
+  }
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot-live { background: #52c77a; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: #0f1923;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 100; transition: opacity 0.5s;
+  }
+  .loading-overlay p { color: #5a7a9a; font-size: 14px; margin-top: 16px; }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid #1e2d3d;
+    border-top-color: #4dc8ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box {
+    background: #2a0d0d; border: 1px solid #4a1a1a;
+    border-radius: 12px; padding: 20px; text-align: center;
+    color: #e05c5c; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>กำลังดึงข้อมูลจาก Google Sheets...</p>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Dashboard ติดตามงานทีม</h1>
+    <p>ฉก.ผกก.ตชด.21 | ระบบติดตามงานอัตโนมัติ</p>
+  </div>
+  <div class="header-right">
+    <div>
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="date-txt" id="dateText">-</div>
+    </div>
+    <button class="refresh-btn" onclick="loadData()">⟳ รีเฟรช</button>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card all">
+    <div class="num" id="s0">-</div>
+    <div class="lbl">งานทั้งหมด</div>
+  </div>
+  <div class="stat-card done">
+    <div class="num" id="s1">-</div>
+    <div class="lbl">เสร็จแล้ว</div>
+    <div class="progress-bar"><div class="progress-fill done-fill" id="p1" style="width:0%"></div></div>
+  </div>
+  <div class="stat-card doing">
+    <div class="num" id="s2">-</div>
+    <div class="lbl">กำลังทำ</div>
+    <div class="progress-bar"><div class="progress-fill doing-fill" id="p2" style="width:0%"></div></div>
+  </div>
+  <div class="stat-card stuck">
+    <div class="num" id="s3">-</div>
+    <div class="lbl">ค้างอยู่</div>
+    <div class="progress-bar"><div class="progress-fill stuck-fill" id="p3" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="member-grid" id="memberGrid"></div>
+
+<div class="footer">
+  <div><span class="status-dot dot-live"></span>Live | รีเฟรชอัตโนมัติทุก 1 นาที</div>
+  <div id="lastUpdate">-</div>
+</div>
+
+<script>
+const PUB_ID = '2PACX-1vRx_GVSSW12TY6kK4rlWmBEsuhKSRUyLmS-yDMrJmvP6Dx8NNf8qd3wfUQxr_e2ACeLY6cLwQqPlst-';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv&gid=0`;
+
+const MEMBERS = [
+  {name:'ร.ต.ท.หญิง วิชุดาฯ', init:'วช', avClass:'av-blue'},
+  {name:'ส.ต.ต.นพรัตน์', init:'นพ', avClass:'av-green'},
+];
+
+const BADGE = {
+  'เสร็จแล้ว': 'b-done',
+  'กำลังทำ': 'b-doing',
+  'ค้างอยู่': 'b-stuck',
+  'รอดำเนินการ': 'b-wait',
+};
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('dateText').textContent = now.toLocaleDateString('th-TH', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  return lines.map(line => {
+    const result = [];
+    let current = '';
+    let inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQuote = !inQuote; }
+      else if (line[i] === ',' && !inQuote) { result.push(current.trim()); current = ''; }
+      else { current += line[i]; }
+    }
+    result.push(current.trim());
+    return result;
+  });
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(CSV_URL + '&t=' + Date.now());
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const dataRows = rows.slice(2).filter(r => r[1] && r[1] !== 'ชื่องาน' && r[0] !== 'รหัสงาน');
+
+    const tasks = dataRows.map(r => ({
+      name: r[1] || '',
+      owner: r[3] || '',
+      status: r[6] || '',
+      pct: r[7] || '',
+    })).filter(t => t.name);
+
+    const total = tasks.length;
+    const done = tasks.filter(t => t.status === 'เสร็จแล้ว').length;
+    const doing = tasks.filter(t => t.status === 'กำลังทำ').length;
+    const stuck = tasks.filter(t => t.status === 'ค้างอยู่').length;
+
+    document.getElementById('s0').textContent = total;
+    document.getElementById('s1').textContent = done;
+    document.getElementById('s2').textContent = doing;
+    document.getElementById('s3').textContent = stuck;
+    document.getElementById('p1').style.width = total ? Math.round(done/total*100)+'%' : '0%';
+    document.getElementById('p2').style.width = total ? Math.round(doing/total*100)+'%' : '0%';
+    document.getElementById('p3').style.width = total ? Math.round(stuck/total*100)+'%' : '0%';
+
+    const grid = document.getElementById('memberGrid');
+    grid.innerHTML = '';
+
+    MEMBERS.forEach(m => {
+      const mt = tasks.filter(t => t.owner === m.name);
+      const md = mt.filter(t => t.status === 'เสร็จแล้ว').length;
+      const pct = mt.length ? Math.round(md/mt.length*100) : 0;
+
+      const card = document.createElement('div');
+      card.className = 'member-card';
+      card.innerHTML = `
+        <div class="member-header">
+          <div class="avatar ${m.avClass}">${m.init}</div>
+          <div>
+            <div class="member-name">${m.name}</div>
+            <div class="member-sub">${mt.length} งาน | เสร็จแล้ว ${md} งาน</div>
+          </div>
+          <div class="member-pct">
+            <div class="big">${pct}%</div>
+            <div class="sm">ความคืบหน้า</div>
+          </div>
+        </div>
+        <div class="task-list">
+          ${mt.map(t => `
+            <div class="task-row">
+              <span class="badge ${BADGE[t.status] || 'b-wait'}">${t.status}</span>
+              <span class="task-name" title="${t.name}">${t.name}</span>
+              <span class="task-pct">${t.pct}</span>
+            </div>
+          `).join('')}
+          ${mt.length === 0 ? '<div style="color:#5a7a9a;font-size:13px;padding:12px 0">ไม่มีงานที่ได้รับมอบหมาย</div>' : ''}
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = 'อัปเดตล่าสุด: ' + now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' น.';
+    document.getElementById('loadingOverlay').style.opacity = '0';
+    setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+
+  } catch(e) {
+    document.getElementById('memberGrid').innerHTML = `<div class="error-box" style="grid-column:1/-1">ดึงข้อมูลไม่ได้: ${e.message}<br><small style="color:#5a7a9a;margin-top:8px;display:block">ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและการแชร์ Google Sheets</small></div>`;
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+loadData();
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>
