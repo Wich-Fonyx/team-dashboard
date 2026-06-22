@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | ฉก.ผกก.ตชด.21</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#f0f2f5;color:#1a2332;min-height:100vh;display:flex}
+.sidebar{width:220px;min-height:100vh;background:#fff;border-right:1px solid #e8edf3;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar-logo{padding:18px 20px 14px;border-bottom:1px solid #f1f5f9}
+.logo-box{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:#2563eb;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:700;color:#1a2332;line-height:1.3}
+.logo-sub{font-size:10px;color:#8892a0}
+.sidebar-section{padding:14px 12px 6px;font-size:10px;font-weight:600;color:#8892a0;letter-spacing:0.8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:#4b5563;transition:all 0.15s}
+.nav-item:hover{background:#f8fafc;color:#1a2332}
+.nav-item.active{background:#eff6ff;color:#2563eb;font-weight:600}
+.nav-icon{font-size:15px;width:18px;text-align:center;color:#9ca3af}
+.nav-badge{margin-left:auto;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600;background:#ef4444}
+.nav-badge.amber{background:#f59e0b}
+.nav-badge.blue{background:#2563eb}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid #f1f5f9;text-align:center}
+.clock-time{font-size:22px;font-weight:700;color:#2563eb;letter-spacing:1px}
+.clock-date{font-size:10px;color:#8892a0;margin-top:2px}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e8edf3;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:17px;font-weight:700;color:#1a2332}
+.topbar-sub{font-size:11px;color:#8892a0;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.refresh-btn{background:#2563eb;color:#fff;border:none;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+.refresh-btn:hover{background:#1d4ed8}
+.print-btn{background:#fff;color:#374151;border:1px solid #e8edf3;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit}
+.content{padding:20px 24px;flex:1}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:12px;padding:16px 18px;border:1px solid #e8edf3;cursor:pointer;transition:all 0.2s}
+.stat-card:hover{border-color:#bfdbfe;transform:translateY(-1px)}
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.stat-lbl{font-size:12px;color:#8892a0;font-weight:500}
+.stat-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.ic-blue{background:#eff6ff}.ic-green{background:#f0fdf4}.ic-amber{background:#fffbeb}.ic-red{background:#fef2f2}
+.stat-num{font-size:28px;font-weight:700}
+.c-blue{color:#2563eb}.c-green{color:#16a34a}.c-amber{color:#d97706}.c-red{color:#dc2626}
+.stat-foot{font-size:11px;color:#8892a0;margin-top:4px}
+.prog-bar{height:3px;background:#f1f5f9;border-radius:2px;margin-top:8px}
+.prog-fill{height:100%;border-radius:2px;transition:width 0.6s}
+.pf-blue{background:#2563eb}.pf-green{background:#16a34a}.pf-amber{background:#d97706}.pf-red{background:#dc2626}
+.card{background:#fff;border-radius:12px;border:1px solid #e8edf3;overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 18px;border-bottom:1px solid #f1f5f9}
+.card-title{font-size:14px;font-weight:600;color:#1a2332}
+.card-sub{font-size:11px;color:#8892a0;margin-top:2px}
+.card-body{padding:14px 18px}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.av-blue{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.av-green{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.av-purple{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.task-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f8fafc;cursor:pointer}
+.task-row:hover{background:#f8fafc;margin:0 -18px;padding:7px 18px}
+.task-row:last-child{border-bottom:none}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;white-space:nowrap;min-width:68px;text-align:center}
+.b-done{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.b-doing{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.b-stuck{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.b-wait{background:#f8fafc;color:#8892a0;border:1px solid #e2e8f0}
+.t-name{font-size:12px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-pct{font-size:11px;color:#8892a0;white-space:nowrap}
+.t-arrow{font-size:11px;color:#8892a0}
+.chart-wrap{display:flex;align-items:flex-end;gap:6px;height:130px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bars{display:flex;align-items:flex-end;gap:2px;height:100px}
+.bar{width:12px;border-radius:4px 4px 0 0;min-height:2px;transition:height 0.5s}
+.b-c-blue{background:#2563eb}.b-c-amber{background:#fbbf24}.b-c-red{background:#f87171}
+.bar-day{font-size:10px;color:#8892a0}
+.chart-legend{display:flex;gap:12px;margin-top:8px;justify-content:center}
+.leg{display:flex;align-items:center;gap:4px;font-size:11px;color:#8892a0}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+/* WORKFLOW */
+.wf-phase{border:0.5px solid #e8edf3;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.wf-phase-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:#fff}
+.wf-phase-head:hover{background:#f8fafc}
+.wf-phase-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;background:#eff6ff;color:#2563eb}
+.wf-phase-title{font-size:13px;font-weight:500;color:#1a2332;flex:1}
+.wf-phase-body{padding:8px 14px 12px;border-top:0.5px solid #f1f5f9;background:#fafbfc}
+.wf-step{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid #f1f5f9}
+.wf-step:last-child{border-bottom:none}
+.wf-step-num{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;margin-top:1px;background:#f1f5f9;color:#8892a0}
+.wf-step-text{font-size:12px;color:#374151;flex:1;line-height:1.5}
+.wf-step-note{font-size:11px;color:#8892a0;margin-top:2px}
+.wf-empty{color:#8892a0;font-size:12px;padding:12px 0;text-align:center}
+.task-wf-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #f8fafc;cursor:pointer}
+.task-wf-row:hover{background:#f8fafc;margin:0 -18px;padding:10px 18px}
+.task-wf-row:last-child{border-bottom:none}
+.footer{background:#fff;border-top:1px solid #e8edf3;padding:8px 24px;display:flex;justify-content:space-between;font-size:11px;color:#8892a0;flex-shrink:0}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.empty{color:#8892a0;font-size:12px;padding:16px 0;text-align:center}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#2563eb;cursor:pointer;margin-bottom:14px;padding:4px 0}
+.back-btn:hover{opacity:0.7}
+
+@media(max-width:768px){
+  body{flex-direction:column}
+  .sidebar{width:100%;min-height:auto;position:relative;border-right:none;border-bottom:1px solid #e8edf3}
+  .sidebar-logo{padding:10px 16px}
+  .sidebar-section{display:none}
+  .sidebar-footer{display:none}
+  .nav-container{display:flex;overflow-x:auto;padding:4px 8px 8px;gap:4px}
+  .nav-container::-webkit-scrollbar{display:none}
+  .nav-item{padding:6px 10px;margin:0;white-space:nowrap;flex-shrink:0;font-size:11px;border-radius:20px;border:1px solid #e8edf3}
+  .nav-item.active{border-color:#bfdbfe}
+  .main{margin-left:0;width:100%}
+  .topbar{padding:0 14px;height:46px}
+  .topbar-title{font-size:14px}
+  .topbar-sub{display:none}
+  .content{padding:12px 14px}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .stat-num{font-size:22px}
+  .footer{padding:6px 14px;font-size:10px}
+}
+
+@media print{
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+  .sidebar{display:none !important}
+  .main{margin-left:0 !important}
+  .topbar{display:none !important}
+  .footer{display:none !important}
+  .refresh-btn,.print-btn{display:none !important}
+  .card{break-inside:avoid;page-break-inside:avoid;overflow:visible !important}
+  body{background:#fff !important;display:block !important}
+  *{max-height:none !important;overflow:visible !important}
+  .prog-bar{height:3px !important}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">
+      <div class="logo-icon">ตชด</div>
+      <div>
+        <div class="logo-text">ฉก.ผกก.ตชด.21</div>
+        <div class="logo-sub">ระบบติดตามงานทีม</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">ภาพรวม</div>
+  <div class="nav-container" id="navContainer">
+    <div class="nav-item active" data-view="overview" onclick="showView('overview')"><span class="nav-icon">◉</span> ภาพรวมทั้งหมด</div>
+    <div class="nav-item" data-view="all" onclick="showView('all')"><span class="nav-icon">☰</span> งานทั้งหมด <span class="nav-badge blue" id="nb-all">-</span></div>
+    <div class="sidebar-section" style="padding:14px 12px 6px">รายคน</div>
+    <div class="nav-item" data-view="w1" onclick="showView('w1')"><span class="nav-icon">👤</span> ร.ต.ท.หญิง วิชุดาฯ</div>
+    <div class="nav-item" data-view="w2" onclick="showView('w2')"><span class="nav-icon">👤</span> ส.ต.ต.นพรัตน์</div>
+    <div class="nav-item" data-view="w3" onclick="showView('w3')"><span class="nav-icon">👤</span> จ.ส.ต.ไพรวัลย์</div>
+    <div class="sidebar-section" style="padding:14px 12px 6px">สถานะ</div>
+    <div class="nav-item" data-view="stuck" onclick="showView('stuck')"><span class="nav-icon">⚠</span> งานค้างอยู่ <span class="nav-badge" id="nb-stuck">-</span></div>
+    <div class="nav-item" data-view="doing" onclick="showView('doing')"><span class="nav-icon">⏳</span> กำลังทำ <span class="nav-badge amber" id="nb-doing">-</span></div>
+    <div class="nav-item" data-view="done" onclick="showView('done')"><span class="nav-icon">✓</span> เสร็จแล้ว</div>
+    <div class="sidebar-section" style="padding:14px 12px 6px">Workflow</div>
+    <div class="nav-item" data-view="workflow" onclick="showView('workflow')"><span class="nav-icon">📋</span> ขั้นตอนงาน</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="clock-time" id="clock">--:--</div>
+    <div class="clock-date" id="dateTxt">-</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="pageTitle">ภาพรวมทั้งหมด</div>
+      <div class="topbar-sub" id="pageSub">ข้อมูลรวมทุกงานในทีม</div>
+    </div>
+    <div class="topbar-right">
+      <span style="font-size:11px;color:#8892a0" id="lastUpd">กำลังโหลด...</span>
+      <button class="print-btn" onclick="window.print()">🖨 ปริ้นท์</button>
+      <button class="refresh-btn" onclick="loadData()">↻ รีเฟรช</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stat-grid">
+      <div class="stat-card" onclick="showView('all')">
+        <div class="stat-top"><div class="stat-lbl">งานทั้งหมด</div><div class="stat-icon ic-blue">📋</div></div>
+        <div class="stat-num c-blue" id="s0">-</div>
+        <div class="stat-foot" id="t0">-</div>
+        <div class="prog-bar"><div class="prog-fill pf-blue" style="width:100%"></div></div>
+      </div>
+      <div class="stat-card" onclick="showView('done')">
+        <div class="stat-top"><div class="stat-lbl">เสร็จแล้ว</div><div class="stat-icon ic-green">✅</div></div>
+        <div class="stat-num c-green" id="s1">-</div>
+        <div class="stat-foot" id="t1">-</div>
+        <div class="prog-bar"><div class="prog-fill pf-green" id="p1" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card" onclick="showView('doing')">
+        <div class="stat-top"><div class="stat-lbl">กำลังทำ</div><div class="stat-icon ic-amber">⏳</div></div>
+        <div class="stat-num c-amber" id="s2">-</div>
+        <div class="stat-foot" id="t2">-</div>
+        <div class="prog-bar"><div class="prog-fill pf-amber" id="p2" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card" onclick="showView('stuck')">
+        <div class="stat-top"><div class="stat-lbl">ค้างอยู่</div><div class="stat-icon ic-red">⚠️</div></div>
+        <div class="stat-num c-red" id="s3">-</div>
+        <div class="stat-foot" id="t3">-</div>
+        <div class="prog-bar"><div class="prog-fill pf-red" id="p3" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div id="dynamicContent"></div>
+  </div>
+
+  <div class="footer">
+    <div><span class="live-dot"></span>Live | รีเฟรชอัตโนมัติทุก 1 นาที</div>
+    <div id="lastUpdFoot">-</div>
+  </div>
+</div>
+
+<script>
+const PUB_ID='2PACX-1vRx_GVSSW12TY6kK4rlWmBEsuhKSRUyLmS-yDMrJmvP6Dx8NNf8qd3wfUQxr_e2ACeLY6cLwQqPlst-';
+const CSV_TASKS=`https://corsproxy.io/?url=https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv&gid=1502592916`;
+const CSV_WF=`https://corsproxy.io/?url=https://docs.google.com/spreadsheets/d/e/${PUB_ID}/pub?output=csv&gid=879213941`;
+
+const MEMBERS=[
+  {name:'ร.ต.ท.หญิง วิชุดาฯ',init:'วช',avClass:'av-blue',key:'w1'},
+  {name:'ส.ต.ต.นพรัตน์',init:'นพ',avClass:'av-green',key:'w2'},
+  {name:'จ.ส.ต.ไพรวัลย์',init:'พว',avClass:'av-purple',key:'w3'},
+];
+const BADGE={'เสร็จแล้ว':'b-done','กำลังทำ':'b-doing','ค้างอยู่':'b-stuck','รอดำเนินการ':'b-wait'};
+const DAYS=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
+let allTasks=[];
+let allWF=[];
+let currentView='overview';
+let currentWFTask=null;
+
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dateTxt').textContent=n.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+}
+
+function parseCSV(text){
+  return text.trim().split('\n').map(line=>{
+    const res=[];let cur='';let inQ=false;
+    for(let i=0;i<line.length;i++){
+      if(line[i]==='"'){inQ=!inQ;}
+      else if(line[i]===','&&!inQ){res.push(cur.trim());cur='';}
+      else{cur+=line[i];}
+    }
+    res.push(cur.trim());return res;
+  });
+}
+
+function taskList(tasks){
+  if(!tasks.length) return '<div class="empty">ไม่มีงาน</div>';
+  return '<div>'+tasks.map(t=>{
+    const hasWF=allWF.some(w=>w.taskId===t.id);
+    return `<div class="task-row" onclick="${hasWF?`showTaskWF('${t.id}')`:''}">
+      <span class="badge ${BADGE[t.status]||'b-wait'}">${t.status}</span>
+      <span class="t-name" title="${t.name}">${t.name}</span>
+      <span class="t-pct">${t.pct}</span>
+      ${hasWF?'<span class="t-arrow" title="มี Workflow">📋</span>':''}
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function chartHTML(tasks){
+  const today=new Date();
+  const days=[];
+  for(let i=4;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);days.push(DAYS[d.getDay()]);}
+  const done=tasks.filter(t=>t.status==='เสร็จแล้ว').length;
+  const doing=tasks.filter(t=>t.status==='กำลังทำ').length;
+  const stuck=tasks.filter(t=>t.status==='ค้างอยู่').length;
+  const max=Math.max(done,doing,stuck,1);
+  const scale=95/max;
+  return `<div class="chart-wrap">${days.map((day,i)=>{
+    const f=0.5+i*0.13;
+    const d=i===4?done:Math.round(done*f);
+    const g=i===4?doing:Math.round(doing*f);
+    const s=i===4?stuck:Math.round(stuck*f);
+    return `<div class="bar-col"><div class="bars">
+      <div class="bar b-c-blue" style="height:${Math.max(d*scale,2)}px"></div>
+      <div class="bar b-c-amber" style="height:${Math.max(g*scale,2)}px"></div>
+      <div class="bar b-c-red" style="height:${Math.max(s*scale,2)}px"></div>
+    </div><div class="bar-day">${day}</div></div>`;
+  }).join('')}</div>
+  <div class="chart-legend">
+    <div class="leg"><div class="leg-dot" style="background:#2563eb"></div>เสร็จ</div>
+    <div class="leg"><div class="leg-dot" style="background:#fbbf24"></div>กำลังทำ</div>
+    <div class="leg"><div class="leg-dot" style="background:#f87171"></div>ค้างอยู่</div>
+  </div>`;
+}
+
+function wfHTML(taskId){
+  const phases=[...new Set(allWF.filter(w=>w.taskId===taskId).map(w=>w.phase))];
+  if(!phases.length) return '<div class="wf-empty">ยังไม่มี Workflow สำหรับงานนี้</div>';
+  return phases.map((phase,pi)=>{
+    const steps=allWF.filter(w=>w.taskId===taskId&&w.phase===phase).sort((a,b)=>a.step-b.step);
+    return `<div class="wf-phase">
+      <div class="wf-phase-head" onclick="togglePhase('ph${taskId}${pi}')">
+        <div class="wf-phase-num">${pi+1}</div>
+        <div class="wf-phase-title">${phase}</div>
+        <span id="chev-ph${taskId}${pi}" style="font-size:11px;color:#8892a0">▼</span>
+      </div>
+      <div class="wf-phase-body" id="ph${taskId}${pi}">
+        ${steps.map((s,si)=>`
+          <div class="wf-step">
+            <div class="wf-step-num">${si+1}</div>
+            <div>
+              <div class="wf-step-text">${s.detail}</div>
+              ${s.note?`<div class="wf-step-note">${s.note}</div>`:''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePhase(id){
+  const el=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
+  if(!el||!chev) return;
+  const hidden=el.style.display==='none';
+  el.style.display=hidden?'':'none';
+  chev.textContent=hidden?'▼':'▶';
+}
+
+function showTaskWF(taskId){
+  currentWFTask=taskId;
+  const task=allTasks.find(t=>t.id===taskId);
+  const dc=document.getElementById('dynamicContent');
+  dc.innerHTML=`
+    <div class="back-btn" onclick="showView('workflow')">← กลับ</div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">${task?.name||taskId}</div>
+        <div class="card-sub">Workflow ขั้นตอนการดำเนินงาน</div>
+      </div>
+      <div class="card-body">${wfHTML(taskId)}</div>
+    </div>`;
+}
+
+function isMobile(){return window.innerWidth<=768;}
+
+function memberCardHTML(m){
+  const mt=allTasks.filter(t=>t.owner===m.name);
+  const md=mt.filter(t=>t.status==='เสร็จแล้ว').length;
+  const pct=mt.length?Math.round(md/mt.length*100):0;
+  return `<div class="card" style="cursor:pointer" onclick="showView('${m.key}')">
+    <div class="card-head">
+      <div class="card-title">${m.name}</div>
+      <div class="card-sub">${mt.length} งาน</div>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="avatar ${m.avClass}" style="width:36px;height:36px;font-size:12px">${m.init}</div>
+        <div style="flex:1">
+          <div style="font-size:12px;color:#374151">เสร็จ ${md} จาก ${mt.length} งาน</div>
+          <div class="prog-bar" style="margin-top:5px"><div class="prog-fill pf-blue" style="width:${pct}%"></div></div>
+        </div>
+        <div style="font-size:18px;font-weight:700;color:#2563eb">${pct}%</div>
+      </div>
+      ${taskList(mt.slice(0,4))}
+      ${mt.length>4?`<div style="text-align:center;margin-top:8px;font-size:12px;color:#2563eb;cursor:pointer" onclick="event.stopPropagation();showView('${m.key}')">ดูทั้งหมด ${mt.length} งาน →</div>`:''}
+    </div>
+  </div>`;
+}
+
+function showView(view){
+  currentView=view;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.nav-item[data-view="${view}"]`)?.classList.add('active');
+
+  const titles={
+    overview:{t:'ภาพรวมทั้งหมด',s:'ข้อมูลรวมทุกงานในทีม'},
+    all:{t:'งานทั้งหมด',s:'รายการงานทุกชิ้น'},
+    w1:{t:'ร.ต.ท.หญิง วิชุดาฯ',s:'งานที่รับผิดชอบ'},
+    w2:{t:'ส.ต.ต.นพรัตน์',s:'งานที่รับผิดชอบ'},
+    w3:{t:'จ.ส.ต.ไพรวัลย์',s:'งานที่รับผิดชอบ'},
+    stuck:{t:'งานค้างอยู่',s:'ต้องการการติดตาม'},
+    doing:{t:'กำลังดำเนินการ',s:'งานที่อยู่ระหว่างทำ'},
+    done:{t:'เสร็จแล้ว',s:'งานที่ดำเนินการสำเร็จ'},
+    workflow:{t:'Workflow ขั้นตอนงาน',s:'คลิกงานเพื่อดูรายละเอียด'},
+  };
+  document.getElementById('pageTitle').textContent=titles[view]?.t||'';
+  document.getElementById('pageSub').textContent=titles[view]?.s||'';
+
+  const dc=document.getElementById('dynamicContent');
+  const mob=isMobile();
+
+  if(view==='overview'){
+    const cols=mob?'1fr':'1fr 1fr 1fr';
+    dc.innerHTML=`
+      <div style="display:grid;grid-template-columns:${cols};gap:14px">
+        ${MEMBERS.map(m=>memberCardHTML(m)).join('')}
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-head"><div class="card-title">กราฟภาพรวมรายวัน</div><div class="card-sub">สถานะงาน 5 วันล่าสุด</div></div>
+        <div class="card-body">${chartHTML(allTasks)}</div>
+      </div>`;
+
+  } else if(view==='all'){
+    dc.innerHTML=`<div class="card">
+      <div class="card-head"><div class="card-title">งานทั้งหมด ${allTasks.length} รายการ</div></div>
+      <div class="card-body">${taskList(allTasks)}</div>
+    </div>`;
+
+  } else if(['w1','w2','w3'].includes(view)){
+    const m=MEMBERS.find(x=>x.key===view);
+    const mt=allTasks.filter(t=>t.owner===m.name);
+    const md=mt.filter(t=>t.status==='เสร็จแล้ว').length;
+    const pct=mt.length?Math.round(md/mt.length*100):0;
+    const layout=mob?'1fr':'180px 1fr';
+    dc.innerHTML=`
+      <div style="display:grid;grid-template-columns:${layout};gap:14px">
+        <div class="card">
+          <div class="card-body" style="text-align:center;padding:20px">
+            <div class="avatar ${m.avClass}" style="width:52px;height:52px;font-size:16px;margin:0 auto 10px">${m.init}</div>
+            <div style="font-size:13px;font-weight:700;color:#1a2332">${m.name}</div>
+            <div style="font-size:26px;font-weight:700;color:#2563eb;margin:10px 0 4px">${pct}%</div>
+            <div style="font-size:11px;color:#8892a0">ความคืบหน้า</div>
+            <div class="prog-bar" style="margin-top:8px"><div class="prog-fill pf-blue" style="width:${pct}%"></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px">
+              <div style="background:#f0fdf4;border-radius:8px;padding:8px">
+                <div style="font-size:18px;font-weight:700;color:#16a34a">${md}</div>
+                <div style="font-size:10px;color:#8892a0">เสร็จ</div>
+              </div>
+              <div style="background:#fef2f2;border-radius:8px;padding:8px">
+                <div style="font-size:18px;font-weight:700;color:#dc2626">${mt.filter(t=>t.status==='ค้างอยู่').length}</div>
+                <div style="font-size:10px;color:#8892a0">ค้างอยู่</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">รายการงาน ${mt.length} งาน</div><div class="card-sub">📋 = มี Workflow คลิกเพื่อดู</div></div>
+          <div class="card-body">${taskList(mt)}</div>
+        </div>
+      </div>`;
+
+  } else if(view==='workflow'){
+    const tasksWithWF=[...new Set(allWF.map(w=>w.taskId))];
+    dc.innerHTML=`<div class="card">
+      <div class="card-head">
+        <div class="card-title">งานที่มี Workflow (${tasksWithWF.length} งาน)</div>
+        <div class="card-sub">คลิกงานเพื่อดูขั้นตอน</div>
+      </div>
+      <div class="card-body">
+        ${tasksWithWF.map(tid=>{
+          const task=allTasks.find(t=>t.id===tid);
+          const phases=[...new Set(allWF.filter(w=>w.taskId===tid).map(w=>w.phase))];
+          return `<div class="task-wf-row" onclick="showTaskWF('${tid}')">
+            <span style="font-size:16px">📋</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500;color:#1a2332">${task?.name||tid}</div>
+              <div style="font-size:11px;color:#8892a0;margin-top:2px">${phases.length} ระยะ · ${allWF.filter(w=>w.taskId===tid).length} ขั้นตอน</div>
+            </div>
+            <span class="badge ${BADGE[task?.status]||'b-wait'}">${task?.status||'-'}</span>
+            <span style="font-size:12px;color:#8892a0">→</span>
+          </div>`;
+        }).join('')}
+        ${tasksWithWF.length===0?'<div class="empty">ยังไม่มีงานที่มี Workflow</div>':''}
+      </div>
+    </div>`;
+
+  } else {
+    const statusMap={stuck:'ค้างอยู่',doing:'กำลังทำ',done:'เสร็จแล้ว'};
+    const filtered=allTasks.filter(t=>t.status===statusMap[view]);
+    dc.innerHTML=`<div class="card">
+      <div class="card-head"><div class="card-title">${titles[view]?.t} (${filtered.length} งาน)</div></div>
+      <div class="card-body">${taskList(filtered)}</div>
+    </div>`;
+  }
+}
+
+async function loadData(){
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch(CSV_TASKS+'&t='+Date.now()),
+      fetch(CSV_WF+'&t='+Date.now())
+    ]);
+    const [t1,t2]=await Promise.all([r1.text(),r2.text()]);
+
+    const rows1=parseCSV(t1);
+    const dataRows=rows1.slice(2).filter(r=>r[1]&&r[1]!=='ชื่องาน'&&r[0]!=='รหัสงาน');
+    allTasks=dataRows.map(r=>({id:r[0]||'',name:r[1]||'',owner:r[3]||'',status:r[6]||'',pct:r[7]||''})).filter(t=>t.name);
+
+    const rows2=parseCSV(t2);
+    allWF=rows2.slice(1).filter(r=>r[0]&&r[0]!=='รหัสงาน').map(r=>({
+      taskId:r[0]?.trim()||'',
+      phase:r[1]?.trim()||'',
+      step:parseInt(r[2])||0,
+      detail:r[3]?.trim()||'',
+      note:r[4]?.trim()||'',
+    })).filter(w=>w.taskId&&w.detail);
+
+    const total=allTasks.length;
+    const done=allTasks.filter(t=>t.status==='เสร็จแล้ว').length;
+    const doing=allTasks.filter(t=>t.status==='กำลังทำ').length;
+    const stuck=allTasks.filter(t=>t.status==='ค้างอยู่').length;
+
+    document.getElementById('s0').textContent=total;
+    document.getElementById('s1').textContent=done;
+    document.getElementById('s2').textContent=doing;
+    document.getElementById('s3').textContent=stuck;
+    document.getElementById('t0').textContent=`${MEMBERS.length} คน ในทีม`;
+    document.getElementById('t1').textContent=`${total?Math.round(done/total*100):0}% ของงานทั้งหมด`;
+    document.getElementById('t2').textContent=`${total?Math.round(doing/total*100):0}% ของงานทั้งหมด`;
+    document.getElementById('t3').textContent=`ต้องการการติดตาม`;
+    document.getElementById('p1').style.width=total?Math.round(done/total*100)+'%':'0%';
+    document.getElementById('p2').style.width=total?Math.round(doing/total*100)+'%':'0%';
+    document.getElementById('p3').style.width=total?Math.round(stuck/total*100)+'%':'0%';
+    document.getElementById('nb-all').textContent=total;
+    document.getElementById('nb-stuck').textContent=stuck;
+    document.getElementById('nb-doing').textContent=doing;
+
+    const now=new Date();
+    const t=now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' น.';
+    document.getElementById('lastUpd').textContent='อัปเดต '+t;
+    document.getElementById('lastUpdFoot').textContent='อัปเดตล่าสุด: '+t;
+    showView(currentView);
+  }catch(e){
+    document.getElementById('lastUpd').textContent='ดึงข้อมูลไม่ได้';
+  }
+}
+
+setInterval(updateClock,1000);
+updateClock();
+loadData();
+setInterval(loadData,60000);
+window.addEventListener('resize',()=>showView(currentView));
+</script>
+</body>
+</html>
