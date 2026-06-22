@@ -88,6 +88,18 @@ body{font-family:'Sarabun',sans-serif;background:#f0f2f5;color:#1a2332;min-heigh
 .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;margin-right:6px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .empty{color:#8892a0;font-size:12px;padding:16px 0;text-align:center}
+@media print {
+  * { -webkit-print-color-adjust: exact !important; }
+  .sidebar { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .topbar { display: none !important; }
+  .footer { display: none !important; }
+  .refresh-btn { display: none !important; }
+  .task-list { max-height: none !important; overflow: visible !important; height: auto !important; }
+  div[style*="max-height"] { max-height: none !important; overflow: visible !important; }
+  .card { break-inside: avoid; page-break-inside: avoid; }
+  body { background: #fff !important; }
+}
 </style>
 </head>
 <body>
